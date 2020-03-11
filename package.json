@@ -1,0 +1,11 @@
+{
+  "name": "balenarepeater",
+  "version": "1.0.0",
+  "description": "A WiFi/Ethernet network repeater",
+  "main": "build/index.js",
+  "scripts": {
+    "build": ""
+  },
+  "author": "Tomás Migone <tomas@balena.io>",
+  "license": "MIT"
+}
