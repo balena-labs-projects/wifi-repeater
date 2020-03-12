@@ -26,7 +26,7 @@ balenaRepeater has the following modes:
 | HOTSPOT_PASSWORD  | Hotspot network password. | `charlietheunicorn` |
 
 
-## To use as a WiFi repeater (WiFi --> WiFi)
+## To use as a WiFi repeater (WiFi --> WiFi)
 
 1. Flash your device with balenaOS
 2. Deploy this app
