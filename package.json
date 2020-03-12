@@ -12,5 +12,8 @@
     "bluebird": "^3.7.2",
     "dbus-native": "^0.4.0",
     "typescript": "^3.8.3"
+  },
+  "devDependencies": {
+    "@types/node": "^13.9.0"
   }
 }
