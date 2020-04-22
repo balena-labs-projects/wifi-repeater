@@ -126,6 +126,15 @@ export const getPathByIface = async (iface: string): Promise<string> => {
   });
 };
 
+export const checkConnectivity = async (): Promise<any> => {
+  return await dbusInvoker({
+    destination: nm,
+    path: '/org/freedesktop/NetworkManager',
+    interface: 'org.freedesktop.NetworkManager',
+    member: 'CheckConnectivity'
+  });
+};
+
 export const addConnection = async (params: BodyEntry[]): Promise<any> => {
   return await dbusInvoker({
     destination: nm,

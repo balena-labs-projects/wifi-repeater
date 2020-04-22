@@ -2,6 +2,7 @@ import {
   createHotspot,
   connectToWifi,
   getWiFiDevices,
+  checkConnectivity,
   NetworkDevice,
   WirelessNetwork
 } from "./nm";
@@ -9,7 +10,7 @@ import {
 (async () => {
   // Get available wireless devices
   let wifiDevices: NetworkDevice[] = await getWiFiDevices()
-  console.log(`Wireless devices found: ${wifiDevices.map(d => d.iface).join(', ')}`);
+  console.log(`Wireless interfaces found: ${wifiDevices.map(d => d.iface).join(', ')}`);
   
   // Create hotspot with main WiFi interface
   let hotspot: WirelessNetwork = {
@@ -18,7 +19,7 @@ import {
     password: process.env.HOTSPOT_PASSWORD || 'charlietheunicorn'
   }
 
-  console.log(`[${hotspot.iface}] Creating hotspot with SSID "${hotspot.ssid}" and password "${hotspot.password}"...`);
+  console.log(`[${hotspot.iface}] Creating ad-hoc WiFi with SSID "${hotspot.ssid}" and password "${hotspot.password}"...`);
   if (wifiDevices.some(d => d.iface === hotspot.iface)) {
     await createHotspot(hotspot);
   } else {
@@ -39,4 +40,8 @@ import {
   } else {
     console.log("No secondary WiFi interface or WiFi credentials found, defaulting to ethernet connection...");
   }
+
+  // Revert changes if we have no internet connectivity
+  let connectivity = await checkConnectivity()
+  console.log(`Connectivity is ${connectivity}`);
 })();

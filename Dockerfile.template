@@ -2,9 +2,10 @@ FROM balenalib/%%BALENA_MACHINE_NAME%%-node:12
 
 ENV DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
 
+RUN install_packages dbus
+
 WORKDIR /usr/src
 COPY . .
 RUN npm install && npm run build
-RUN chmod +x /usr/src/entry.sh
 
-CMD [ "/usr/src/entry.sh" ]
+CMD [ "node", "/usr/src/build/index.js" ]
