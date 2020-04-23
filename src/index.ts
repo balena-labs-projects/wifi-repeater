@@ -1,47 +1,52 @@
 import {
-  createHotspot,
+  createAccessPoint,
   connectToWifi,
   getWiFiDevices,
-  checkConnectivity,
-  NetworkDevice,
-  WirelessNetwork
+  getWiredDevices
 } from "./nm";
 
+// defaults
+// const HOTSPOT_IFACE = process.env.HOTSPOT_IFACE || 'wlan0';
+const HOTSPOT_SSID = process.env.HOTSPOT_SSID || `WiFi Repeater`;
+const HOTSPOT_PASSWORD = process.env.HOTSPOT_PASSWORD || 'charlietheunicorn';
+// const WIFI_IFACE = process.env.WIFI_IFACE || 'wlan1';
+const WIFI_SSID = process.env.WIFI_SSID;
+const WIFI_PASSWORD = process.env.WIFI_PASSWORD;
+
 (async () => {
-  // Get available wireless devices
-  let wifiDevices: NetworkDevice[] = await getWiFiDevices()
+  // Get available devices
+  console.log('-- WiFi repeater: starting...');
+
+  const wifiDevices = await getWiFiDevices();
+  const wiredDevices = await getWiredDevices();
   console.log(`Wireless interfaces found: ${wifiDevices.map(d => d.iface).join(', ')}`);
-  
-  // Create hotspot with main WiFi interface
-  let hotspot: WirelessNetwork = {
-    iface: process.env.HOTSPOT_IFACE || 'wlan0',
-    ssid: process.env.HOTSPOT_SSID || `WiFi Repeater`,
-    password: process.env.HOTSPOT_PASSWORD || 'charlietheunicorn'
-  }
+  console.log(`Wired interfaces found: ${wiredDevices.map(d => d.iface).join(', ')}`);
 
-  console.log(`[${hotspot.iface}] Creating ad-hoc WiFi with SSID "${hotspot.ssid}" and password "${hotspot.password}"...`);
-  if (wifiDevices.some(d => d.iface === hotspot.iface)) {
-    await createHotspot(hotspot);
-  } else {
-    console.log(`[${hotspot.iface}] Selected interface does not exist. Skipping hotspot creation...`);
-  }
+  console.log(wifiDevices);
+  console.log(wiredDevices);
+  try {
 
-  // Connect to WiFi with secondary interface if there is one and credentials were provided
-  let secondaryInterfaces: NetworkDevice[] = wifiDevices.filter(d => d.iface !== hotspot.iface)
-  if (secondaryInterfaces.length > 0 && process.env.WIFI_SSID && process.env.WIFI_PASSWORD) {
-    let wifi: WirelessNetwork = {
-      iface: process.env.WIFI_IFACE || secondaryInterfaces[0].iface,
-      ssid: process.env.WIFI_SSID,
-      password: process.env.WIFI_PASSWORD
+    // Find a wireless device with AP capabilities and create the AP
+    const apDevice = wifiDevices.find(device => device.apCapable)
+    if (apDevice) {
+      console.log(`Creating WiFi AP on ${apDevice.iface} with SSID "${HOTSPOT_SSID}" and password "${HOTSPOT_PASSWORD}"...`);
+      await createAccessPoint({ iface: apDevice.iface, ssid: HOTSPOT_SSID, password: HOTSPOT_PASSWORD });
+    } else {
+      throw new Error(`Could not find Wifi device with AP capabilities.`);
     }
-    
-    console.log(`[${wifi.iface}] Connecting to WiFi with SSID "${wifi.ssid}" and password "${wifi.password}"`);
-    await connectToWifi(wifi);
-  } else {
-    console.log("No secondary WiFi interface or WiFi credentials found, defaulting to ethernet connection...");
-  }
 
-  // Revert changes if we have no internet connectivity
-  let connectivity = await checkConnectivity()
-  console.log(`Connectivity is ${connectivity}`);
+    // If 
+    if (!wiredDevices.some(d => d.connected)) {
+      const bridgeDevice = wifiDevices.find(device => device.iface !== apDevice.iface);
+      if (bridgeDevice && WIFI_SSID && WIFI_PASSWORD) {
+        console.log(`Connecting ${bridgeDevice.iface} to WiFi with SSID "${WIFI_SSID}" and password "${WIFI_PASSWORD}"`);
+        await connectToWifi({ iface: bridgeDevice.iface, ssid: WIFI_SSID, password: WIFI_PASSWORD });
+      } else {
+        throw new Error(`Could not find secondary WiFi device or WiFi credentials not found`);
+      }
+    }
+  } catch (error) {
+    console.log(error);
+
+  }
 })();

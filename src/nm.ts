@@ -5,33 +5,52 @@ import {
   getProperty
 } from './dbus';
 
+export interface NetworkDevice {
+  iface: string; // IP interface name
+  path: string; // DBus object path
+  type: string;
+  driver: string;
+  connected: boolean;
+}
+
+export interface WirelessDevice extends NetworkDevice {
+  apCapable: boolean;
+}
+
+export interface WiredDevice extends NetworkDevice {
+}
+
 export interface WirelessNetwork {
   iface: string;
   ssid: string;
   password?: string;
 }
 
-export interface NetworkDevice {
-  iface: string;  // IP interface name
-  path: string; // DBus object path
-}
-
 const nm: string = 'org.freedesktop.NetworkManager';
 
-export const createHotspot = async (network: WirelessNetwork): Promise<any> => {
+// Wireless
+export const createAccessPoint = async (device: WirelessNetwork): Promise<any> => {
   try {
+    // Error out if the interface does not exist
+    const wifiDevices: NetworkDevice[] = await getWiFiDevices()
+
+    if (!wifiDevices.some(d => d.iface === device.iface)) {
+      console.log(`Selected interface ${device.iface} does not exist. Hotspot creation aborted...`);
+      return
+    }
+
     const connectionParams: BodyEntry[] = [
       ['connection', [
-        ['id', ['s', network.ssid]],
+        ['id', ['s', device.ssid]],
         ['type', ['s', '802-11-wireless']],
       ]],
       ['802-11-wireless', [
-        ['ssid', ['ay', stringToArrayOfBytes(network.ssid)]],
+        ['ssid', ['ay', stringToArrayOfBytes(device.ssid)]],
         ['mode', ['s', 'ap']],
       ]],
       ['802-11-wireless-security', [
         ['key-mgmt', ['s', 'wpa-psk']],
-        ['psk', ['s', network.password]],
+        ['psk', ['s', device.password]],
       ]],
       ['ipv4', [
         ['method', ['s', 'shared']],
@@ -41,9 +60,9 @@ export const createHotspot = async (network: WirelessNetwork): Promise<any> => {
       ]],
     ];
 
-    let device = await getPathByIface(network.iface);
-    let connection = await addConnection(connectionParams);
-    let result = await activateConnection(connection, device);
+    const dbusPath = await getPathByIface(device.iface);
+    const connection = await addConnection(connectionParams);
+    const result = await activateConnection(connection, dbusPath);
     return result
   } catch (error) {
     console.log(`Error creating Hotspot: ${error}`);
@@ -82,24 +101,36 @@ export const connectToWifi = async (network: WirelessNetwork): Promise<any> => {
   }
 };
 
-export const getWiFiDevices = async (): Promise<NetworkDevice[]> => {
-  return await getDevicesByType(NetworkManagerTypes.DEVICE_TYPE.WIFI)
+// NetworkManager
+export const getWiFiDevices = async (): Promise<WirelessDevice[]> => {
+  const devices: NetworkDevice[] = await getDevicesByType(NetworkManagerTypes.DEVICE_TYPE.WIFI)
+  const wifiDevices: WirelessDevice[] = []
+
+  for await (const device of devices) {
+    const apCapable: boolean = !!(await getProperty(nm, device.path, 'org.freedesktop.NetworkManager.Device.Wireless', 'WirelessCapabilities') & NetworkManagerTypes.WIFI_DEVICE_CAP.AP);
+    wifiDevices.push({ ...device, apCapable });
+  }
+
+  return wifiDevices;
 };
 
-export const getWiredDevices = async (): Promise<NetworkDevice[]> => {
-  return await getDevicesByType(NetworkManagerTypes.DEVICE_TYPE.ETHERNET)
+export const getWiredDevices = async (): Promise<WiredDevice[]> => {
+  return await getDevicesByType(NetworkManagerTypes.DEVICE_TYPE.ETHERNET);
 };
 
-export const getDevicesByType = async(type: number): Promise<NetworkDevice[]> => {
-  let paths: string[] = await getDevicesPath()
-  let devices: NetworkDevice[] = []
+export const getDevicesByType = async (type: number): Promise<NetworkDevice[]> => {
+  const paths: string[] = await getDevicesPath();
+  const devices: NetworkDevice[] = [];
 
-  for await (let path of paths) {
-    let deviceType = await getProperty(nm, path, 'org.freedesktop.NetworkManager.Device', 'DeviceType')
+  for await (const path of paths) {
+    const deviceType: number = await getProperty(nm, path, 'org.freedesktop.NetworkManager.Device', 'DeviceType');
 
     if (deviceType === type) {
-      let iface = await getProperty(nm, path, 'org.freedesktop.NetworkManager.Device', 'Interface')
-      devices.push({ path, iface })
+      const iface: string = await getProperty(nm, path, 'org.freedesktop.NetworkManager.Device', 'Interface');
+      const connected: boolean = await getProperty(nm, path, 'org.freedesktop.NetworkManager.Device', 'Ip4Connectivity') === NetworkManagerTypes.CONNECTIVITY.FULL;
+      const driver: string = await getProperty(nm, path, 'org.freedesktop.NetworkManager.Device', 'Driver');
+      const typeName: string = Object.keys(NetworkManagerTypes.DEVICE_TYPE).find(key => NetworkManagerTypes.DEVICE_TYPE[key] === type) || "UNKNOWN";
+      devices.push({ path, iface, connected, driver, type: typeName });
     }
   }
 
@@ -124,6 +155,11 @@ export const getPathByIface = async (iface: string): Promise<string> => {
     signature: 's',
     body: [iface]
   });
+};
+
+export const checkDeviceConnectivity = async (iface: string): Promise<any> => {
+  const path: string = await getPathByIface(iface)
+  return await getProperty(nm, path, 'org.freedesktop.NetworkManager.Device', 'Ip4Connectivity')
 };
 
 export const checkConnectivity = async (): Promise<any> => {
