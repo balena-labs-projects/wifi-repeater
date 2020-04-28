@@ -56,7 +56,7 @@ Requirement: provide network access through a wirless network. Also requires a U
 | WIFI_SSID | WiFi network name | |
 | WIFI_PASSWORD | WiFi network password | |
 
-# LED patterns
+# LED patterns
 
 In case something goes wrong WiFi repeater will produce a series of blinking patterns with the ACT LED (next to PWR LED) to help troubleshoot the issue.
 Valid patterns are the following:
@@ -68,5 +68,5 @@ Valid patterns are the following:
 | 4 blinks | WiFi credentials for secondary wireless device not provided. | Ethernet is disconnected or has no internet access. Switched to repeater mode but could not find WiFi credentials. | Provide internet access via Ethernet cable. | Provide valid WiFi credentials |
 | 5 blinks | No internet access | Ethernet is disconnected or has no internet access. Switched to repeater mode, connected to WiFi but still have no internet access. | Provide internet access via Ethernet cable. | Ensure the target WiFi has internet access. |
 
-# TODO
+# TODO
 - Provide an `offline` way of updating WiFi credentials (not using device environment variables through the balena dashboard)
