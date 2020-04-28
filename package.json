@@ -9,6 +9,7 @@
   "author": "Tomás Migone <tomas@balena.io>",
   "license": "MIT",
   "dependencies": {
+    "blinking": "0.0.3",
     "bluebird": "^3.7.2",
     "dbus-native": "^0.4.0",
     "typescript": "^3.8.3"

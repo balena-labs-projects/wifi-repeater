@@ -1,16 +1,30 @@
 # wifi-repeater
 
-WiFi Repeater project is a utility to dynamically extend an existing wired or wireless network. To achieve this the utility uses the onboard WiFi chip to create a wireless hotspot you can connect your devices to.
+WiFi Repeater project is a utility to dynamically extend an existing wired or wireless network. To achieve this the utility uses the onboard WiFi chip to create an access point you can connect your devices to.
 To enable internet access you can either plug an ethernet cable (AP mode) or use a secondary WiFi interface (by using a USB WiFi dongle) to connect to an internet enabled network.
 
 WiFi Repeater can work in the following modes:
-- Access Point: extend an existing ethernet connection with an ad-hoc WiFi network
-- Repeater: extend an existing wireless connection with an ad-hoc WiFi network. Requires the use of a USB Wifi dongle (see [this](https://www.balena.io/docs/reference/hardware/wifi-dongles/) list for recommended dongles)
+- Access Point: extend an existing ethernet connection with an access point network
+- Repeater: extend an existing wireless connection with an access point network. Requires the use of a USB Wifi dongle (see [this](https://www.balena.io/docs/reference/hardware/wifi-dongles/) list for recommended dongles)
+
+## How it works
+
+WiFi Repeater will automatically scan your network and check each device capabilities. It will then attempt to cofigure the devices to work in `Access Point` mode and if that is not possible it will switch to `Repeater` mode. You *do not* need to pre configure the device to work in either mode.
+
+For `Access Point` mode it needs:
+- Internet connectivity via Ethernet
+- Wireless device with AP capabilities (such as the onboard WiFi chip in Raspberry Pi devices)
+
+For `Repeater` mode it needs:
+- Wireless device with AP capabilities (such as the onboard WiFi chip in Raspberry Pi devices)
+- Secondary wireless device and valid credentials for a wireless network.
 
 ## Required hardware
  
  This project has been developed and tested with Rasbperry Pi 3 and 4 though it should work with any board that supports balenaOS.
 
+
+# Usage
 
 ## Mode: Access Point
 
@@ -22,9 +36,8 @@ Requirement: provide network access through the ethernet port
 
 | Env var | Description | Default |
 | ------------- | ------------- | ------------- |
-| HOTSPOT_IFACE | Interface where we will create the ad-hoc WiFi network. | `wlan0` |
-| HOTSPOT_SSID | Ad-hoc WiFi network name. | `WiFi Repeater` |
-| HOTSPOT_PASSWORD | Ad-hoc WiFi network password. | `charlietheunicorn` |
+| AP_SSID | Access point network name. | `WiFi Repeater` |
+| AP_PASSWORD | Access point network password. | `charlietheunicorn` |
 
 
 ## Mode: Repeater
@@ -38,12 +51,22 @@ Requirement: provide network access through a wirless network. Also requires a U
 
 | Env var | Description | Default |
 | ------------- | ------------- | ------------- |
-| HOTSPOT_IFACE | Interface where we will create the ad-hoc WiFi network. | `wlan0` |
-| HOTSPOT_SSID | Ad-hoc WiFi network name. | `WiFi Repeater` |
-| HOTSPOT_PASSWORD | Ad-hoc WiFi network password. | `charlietheunicorn` |
-| WIFI_IFACE | Interface that connects to an existing internet enabled WiFi network. | First wireless interface that is not `HOTSPOT_IFACE` |
-| WIFI_SSID | WiFi network name | --- |
-| WIFI_PASSWORD | WiFi network password | --- |
+| AP_SSID | Access point network name. | `WiFi Repeater` |
+| AP_PASSWORD | Access point network password. | `charlietheunicorn` |
+| WIFI_SSID | WiFi network name | |
+| WIFI_PASSWORD | WiFi network password | |
 
-Note that the onboard wireless interface will always be used as the default interface where the hotspot is created.
+# LED patterns
 
+In case something goes wrong WiFi repeater will produce a series of blinking patterns with the ACT LED (next to PWR LED) to help troubleshoot the issue.
+Valid patterns are the following:
+
+| LED pattern | Problem | Description | Solution (AP mode) | Solution (Repeater mode) |
+| ------------- | ------------- | ------------- | ------------- | ------------- |
+| 2 blinks | Could not find a wireless device with Access Point capabilities | Wireless devices detected don't support Access Point mode. | Use a WiFi chipset that supports AP mode or a WiFi dongle. | Use a WiFi chipset that supports AP mode or a WiFi dongle. |
+| 3 blinks | Could not find a secondary wireless device | Ethernet is disconnected or has no internet access. Switched to repeater mode but could not find a secondary wireless device. | Provide internet access via Ethernet cable. | Provide a secondary wireless device by using a WiFi dongle. | 
+| 4 blinks | WiFi credentials for secondary wireless device not provided. | Ethernet is disconnected or has no internet access. Switched to repeater mode but could not find WiFi credentials. | Provide internet access via Ethernet cable. | Provide valid WiFi credentials |
+| 5 blinks | No internet access | Ethernet is disconnected or has no internet access. Switched to repeater mode, connected to WiFi but still have no internet access. | Provide internet access via Ethernet cable. | Ensure the target WiFi has internet access. |
+
+# TODO
+- Provide an `offline` way of updating WiFi credentials (not using device environment variables through the balena dashboard)

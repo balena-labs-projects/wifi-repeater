@@ -162,13 +162,15 @@ export const checkDeviceConnectivity = async (iface: string): Promise<any> => {
   return await getProperty(nm, path, 'org.freedesktop.NetworkManager.Device', 'Ip4Connectivity')
 };
 
-export const checkConnectivity = async (): Promise<any> => {
-  return await dbusInvoker({
+export const checkNMConnectivity = async (): Promise<any> => {
+  let nmConnectivityState = await dbusInvoker({
     destination: nm,
     path: '/org/freedesktop/NetworkManager',
     interface: 'org.freedesktop.NetworkManager',
     member: 'CheckConnectivity'
   });
+
+  return nmConnectivityState === NetworkManagerTypes.CONNECTIVITY.FULL
 };
 
 export const addConnection = async (params: BodyEntry[]): Promise<any> => {
