@@ -9,7 +9,7 @@ import {
 
 // defaults
 const AP_SSID = process.env.AP_SSID || `WiFi Repeater`;
-const AP_PASSWORD = process.env.AP_PASSWORD || 'charlietheunicorn';
+const AP_PASSWORD = process.env.AP_PASSWORD || '11223344';
 const WIFI_SSID = process.env.WIFI_SSID;
 const WIFI_PASSWORD = process.env.WIFI_PASSWORD;
 
