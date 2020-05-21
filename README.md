@@ -7,6 +7,8 @@ WiFi Repeater can work in the following modes:
 - Access Point: extend an existing ethernet connection with an access point network
 - Repeater: extend an existing wireless connection with an access point network. Requires the use of a USB Wifi dongle (see [this](https://www.balena.io/docs/reference/hardware/wifi-dongles/) list for recommended dongles)
 
+![WiFi Repeater modes of operation](img/modes.png)
+
 ## How it works
 
 WiFi Repeater will automatically scan your network and check each device capabilities. It will then attempt to cofigure the devices to work in `Access Point` mode and if that is not possible it will switch to `Repeater` mode. You *do not* need to pre configure the device to work in either mode.
