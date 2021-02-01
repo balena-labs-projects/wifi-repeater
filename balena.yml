@@ -1,0 +1,20 @@
+name: "WiFi Repeater"
+description: "Easily create a WiFi Access Point or WiFi repeater with balenaOS."
+type: "sw.application"
+assets:
+  repository:
+    type: "blob.asset"
+    data:
+      url: "https://github.com/balenalabs-incubator/wifi-repeater"
+  logo:
+    type: "blob.asset"
+    data:
+      url: "https://raw.githubusercontent.com/balenalabs-incubator/wifi-repeater/master/logo.png"
+data:
+  applicationEnvironmentVariables:
+    - AP_SSID: "WiFi Repeater"
+    - AP_PASSWORD: "charlietheunicorn"
+  defaultDeviceType: "raspberrypi3"
+  supportedDeviceTypes:
+    - "raspberrypi3"
+    - "raspberrypi4-64"
