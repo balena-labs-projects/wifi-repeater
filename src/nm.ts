@@ -24,6 +24,8 @@ export interface WirelessNetwork {
   iface: string;
   ssid: string;
   password?: string;
+  channel: number;
+  band: string;
 }
 
 const nm: string = 'org.freedesktop.NetworkManager';
@@ -47,6 +49,8 @@ export const createAccessPoint = async (device: WirelessNetwork): Promise<any> =
       ['802-11-wireless', [
         ['ssid', ['ay', stringToArrayOfBytes(device.ssid)]],
         ['mode', ['s', 'ap']],
+        ['channel', ['u'], device.channel],
+        ['band', ['s', device.band]],
       ]],
       ['ipv4', [
         ['method', ['s', 'shared']],
