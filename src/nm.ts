@@ -48,10 +48,6 @@ export const createAccessPoint = async (device: WirelessNetwork): Promise<any> =
         ['ssid', ['ay', stringToArrayOfBytes(device.ssid)]],
         ['mode', ['s', 'ap']],
       ]],
-      ['802-11-wireless-security', [
-        ['key-mgmt', ['s', 'wpa-psk']],
-        ['psk', ['s', device.password]],
-      ]],
       ['ipv4', [
         ['method', ['s', 'shared']],
       ]],
@@ -59,6 +55,15 @@ export const createAccessPoint = async (device: WirelessNetwork): Promise<any> =
         ['method', ['s', 'ignore']],
       ]],
     ];
+
+    if (device.password) {
+      connectionParams.push(
+        ['802-11-wireless-security', [
+          ['key-mgmt', ['s', 'wpa-psk']],
+          ['psk', ['s', device.password]],
+        ]]
+      );
+    }
 
     const dbusPath = await getPathByIface(device.iface);
     const connection = await addConnection(connectionParams);
