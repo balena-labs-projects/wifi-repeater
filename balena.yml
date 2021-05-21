@@ -2,6 +2,14 @@ name: "WiFi Repeater"
 description: "Easily create a WiFi Access Point or WiFi repeater with balenaOS."
 type: "sw.application"
 joinable: false
+post-provisioning: >-
+  ## Usage instructions
+
+  After flashing your device allow some time for the application to download.
+
+  WiFi Repeater will automatically scan your network and check each device's capabilities. It will then attempt to configure the devices to work in `Access Point` mode and if that is not possible it will switch to `Repeater` mode. You *do not* need to pre configure the device to work in either mode.
+
+  Visit https://github.com/balenalabs/wifi-repeater for configuration details.
 assets:
   repository:
     type: "blob.asset"
