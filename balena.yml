@@ -1,6 +1,7 @@
 name: "WiFi Repeater"
 description: "Easily create a WiFi Access Point or WiFi repeater with balenaOS."
 type: "sw.application"
+joinable: false
 assets:
   repository:
     type: "blob.asset"
