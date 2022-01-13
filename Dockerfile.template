@@ -1,20 +1,50 @@
-# Build stage
-FROM balenalib/%%BALENA_MACHINE_NAME%%-node:12-build as builder
+# Application build stage
+FROM balenalib/%%BALENA_MACHINE_NAME%%-node:12-build as app_builder
 
 WORKDIR /usr/src
 
 RUN install_packages python
 RUN npm install blinking
 
+
+# Driver build stage
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian as driver_builder
+
+RUN install_packages awscli bc bison build-essential curl dkms flex git g++ libelf-dev libssl-dev make python python3 unzip wget zip   
+COPY kernel-module-build/* /usr/src/app/
+COPY rtl8812au /usr/src/app/rtl8812au
+WORKDIR /usr/src/app
+
+# Install balena-cli
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash \
+    && . ~/.bashrc && nvm install v12 \
+    && npm install balena-cli --global --production --unsafe-perm \
+    && ln -s /root/.nvm/versions/node/$(node --version)/bin/node /usr/bin/node \
+    && ln -s /root/.nvm/versions/node/$(node --version)/bin/balena /usr/bin/balena
+
+# Get the 5 latest production images
+RUN IMAGE_VERSIONS=$(balena os versions %%BALENA_MACHINE_NAME%% | grep -v ".dev" | head -n5) \
+    && for VERSION in $IMAGE_VERSIONS; do echo $VERSION | sed 's/^v//g' >> OS_VERSIONS; done
+
+# Build the drivers for each version
+RUN BALENA_MACHINE_NAME=%%BALENA_MACHINE_NAME%% ./build.sh build \
+    --device %%BALENA_MACHINE_NAME%% --os-version "$(cat OS_VERSIONS)" \
+    --src rtl8812au --dest-dir drivers
+
+
 # Run stage
 FROM balenalib/%%BALENA_MACHINE_NAME%%-node:12-run
 ENV DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
+ENV UDEV=on
 
-RUN install_packages dbus
+RUN install_packages build-essential bc bison build-essential curl dbus dkms flex git libelf-dev libssl-dev python wget
 
 WORKDIR /usr/src
 COPY . .
-COPY --from=builder /usr/src .
+COPY --from=app_builder /usr/src .
+COPY --from=driver_builder /usr/src/app/drivers drivers
 RUN npm install && npm run build
 
-CMD [ "node", "/usr/src/build/index.js" ]
+WORKDIR /usr/src
+
+CMD [ "bash", "/usr/src/run.sh" ]

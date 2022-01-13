@@ -2,7 +2,9 @@ version: "2.1"
 
 services:
   wifi-repeater:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile.template
     privileged: true
     labels:
       io.balena.features.dbus: '1'
