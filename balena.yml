@@ -9,16 +9,16 @@ post-provisioning: >-
 
   WiFi Repeater will automatically scan your network and check each device's capabilities. It will then attempt to configure the devices to work in `Access Point` mode and if that is not possible it will switch to `Repeater` mode. You *do not* need to pre configure the device to work in either mode.
 
-  Visit https://github.com/balenalabs/wifi-repeater for configuration details.
+  Visit https://github.com/balena-labs-projects/wifi-repeater for configuration details.
 assets:
   repository:
     type: "blob.asset"
     data:
-      url: "https://github.com/balenalabs-incubator/wifi-repeater"
+      url: "https://github.com/balena-labs-projects-incubator/wifi-repeater"
   logo:
     type: "blob.asset"
     data:
-      url: "https://raw.githubusercontent.com/balenalabs-incubator/wifi-repeater/master/logo.png"
+      url: "https://raw.githubusercontent.com/balena-labs-projects-incubator/wifi-repeater/master/logo.png"
 data:
   applicationEnvironmentVariables:
     - AP_SSID: "WiFi Repeater"
