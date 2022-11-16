@@ -1,4 +1,17 @@
 - commits:
+    - subject: fixing paths for assets in balena.yml
+      hash: ff88d3037270b7b259b29b57ce3a475202d4e43d
+      body: ""
+      footer:
+        Signed-off-by: Flynn Joffray <flynn@balena.io>
+        signed-off-by: Flynn Joffray <flynn@balena.io>
+        Change-type: patch
+        change-type: patch
+      author: Flynn Joffray
+  version: 0.1.2
+  title: ""
+  date: 2022-11-16T21:21:58.027Z
+- commits:
     - subject: adding flowzone.yml
       hash: 53e87582ddf72cddc57a16bcd543f9238540919a
       body: ""

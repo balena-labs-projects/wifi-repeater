@@ -1,6 +1,6 @@
 {
   "name": "balenarepeater",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A WiFi/Ethernet network repeater",
   "main": "build/index.js",
   "private": "true",
@@ -23,6 +23,6 @@
     "@types/node": "^13.9.0"
   },
   "versionist": {
-    "publishedAt": "2022-11-16T20:51:20.098Z"
+    "publishedAt": "2022-11-16T21:21:58.103Z"
   }
 }
