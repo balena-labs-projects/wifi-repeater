@@ -1,0 +1,70 @@
+- commits:
+    - subject: adding flowzone.yml
+      hash: 53e87582ddf72cddc57a16bcd543f9238540919a
+      body: ""
+      footer:
+        Signed-off-by: Flynn Joffray <flynn@balena.io>
+        signed-off-by: Flynn Joffray <flynn@balena.io>
+        Change-type: patch
+        change-type: patch
+      author: Flynn Joffray
+    - subject: Updating repo references from balenalabs to balena-labs-projects (#32)
+      hash: 90d27d48f9b134ffec3f2566c5aadc459284f265
+      body: ""
+      footer:
+        Signed-off-by: Flynn Joffray <flynn@balena.io>
+        signed-off-by: Flynn Joffray <flynn@balena.io>
+        Change-type: patch
+        change-type: patch
+      author: Flynn Joffray
+    - subject: "meta: add balenaHub instructions"
+      hash: 85e10b2b1ecebb4e3ac1b88f95641aa0ca59de99
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Tomás Migone <tomas@balena.io>
+        signed-off-by: Tomás Migone <tomas@balena.io>
+      author: Tomás Migone
+    - subject: "meta: make fleet not joinable"
+      hash: fd7ffe04c7fad4a647bbb7dacb8ffd7e1714bb57
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Tomás Migone <tomas@balena.io>
+        signed-off-by: Tomás Migone <tomas@balena.io>
+      author: Tomás Migone
+    - subject: Update balena.yml format
+      hash: 9470f42fc439a35d59bf556ccb4c8ccf27ad4a85
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Chris Crocker-White <chriscw@balena.io>
+        signed-off-by: Chris Crocker-White <chriscw@balena.io>
+      author: Chris Crocker-White
+  version: 0.1.1
+  title: ""
+  date: 2022-11-16T20:51:20.003Z
+- version: 0.1.0
+  date: 2021-01-28T14:39:04Z
+  commits:
+    - hash: 42da664aced92fb2562c6c10625d99553138fb3e
+      author: Tomás Migone
+      footers:
+        chang-type: patch
+        signed-off-by: Tomás Migone <tomas@balena.io>
+      subject: Update logo
+      body: null
+    - hash: 4b6a54b282a00e5bafffdd70886346d840cbb4a8
+      author: Tomás Migone
+      footers:
+        change-type: patch
+        signed-off-by: Tomás Migone <tomas@balena.io>
+      subject: "meta: add project to balenaHub"
+      body: null
+    - hash: 986c8a180cb538f2b3dc8d3af43ab0ca3263e15e
+      author: MyCatCondo
+      subject: Grammar fix
+      body: Fixed some words not being spelled correctly.
