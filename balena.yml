@@ -14,12 +14,11 @@ assets:
   repository:
     type: "blob.asset"
     data:
-      url: "https://github.com/balena-labs-projects-incubator/wifi-repeater"
+      url: "https://github.com/balena-labs-projects/wifi-repeater"
   logo:
     type: "blob.asset"
     data:
-      url: "https://raw.githubusercontent.com/balena-labs-projects-incubator/wifi-rep\
-        eater/master/logo.png"
+      url: "https://raw.githubusercontent.com/balena-labs-projects/wifi-repeater/master/logo.png"
 data:
   applicationEnvironmentVariables:
     - AP_SSID: "WiFi Repeater"
