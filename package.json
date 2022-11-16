@@ -3,7 +3,12 @@
   "version": "0.1.0",
   "description": "A WiFi/Ethernet network repeater",
   "main": "build/index.js",
+  "private": "true",
+  "engines": {
+    "node": "12.x"
+  },
   "scripts": {
+    "test": "exit 0",
     "build": "tsc --project tsconfig.json"
   },
   "author": "Tomás Migone <tomas@balena.io>",
