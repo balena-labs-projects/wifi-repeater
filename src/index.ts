@@ -9,7 +9,9 @@ import {
 
 // defaults
 const AP_SSID = process.env.AP_SSID || `WiFi Repeater`;
-const AP_PASSWORD = process.env.AP_PASSWORD || 'charlietheunicorn';
+const AP_PASSWORD = process.env.AP_PASSWORD || '';
+const AP_CHANNEL = Number(process.env.AP_CHANNEL) || 1;
+const AP_BAND = process.env.AP_BAND || 'bg';
 const WIFI_SSID = process.env.WIFI_SSID;
 const WIFI_PASSWORD = process.env.WIFI_PASSWORD;
 
@@ -47,8 +49,8 @@ const LED_ERROR_PATTERNS = {
     return;
   }
 
-  console.log(`Creating WiFi AP on ${accessPoint.iface} with SSID "${AP_SSID}" and password "${AP_PASSWORD}"...`);
-  await createAccessPoint({ iface: accessPoint.iface, ssid: AP_SSID, password: AP_PASSWORD });
+  console.log(`Creating WiFi AP on ${accessPoint.iface} with SSID "${AP_SSID}", CHANNEL "${AP_CHANNEL}", BAND "${AP_BAND}"...`);
+  await createAccessPoint({ iface: accessPoint.iface, ssid: AP_SSID, password: AP_PASSWORD, channel: AP_CHANNEL, band: AP_BAND });
 
   // Use secondary wireless device for internet if ethernet doesn't do the job.
   if (!ethernet) {
